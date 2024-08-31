@@ -13,9 +13,10 @@ export const ReactNativeJoystick = ({ onStart, onMove, onStop, color = "#000000"
 
   const handleTouchMove = useCallback(
     (event: GestureTouchEvent) => {
+      "worklet";
       const e = event.changedTouches[0];
       const fingerX = e.x;
-      const fingerY = Platform.OS === 'web' ? (wrapperRadius * 2 - e.y) : e.y;
+      const fingerY = Platform.OS === "web" ? wrapperRadius * 2 - e.y : e.y;
       let coordinates = {
         x: fingerX - nippleRadius,
         y: fingerY - nippleRadius,
@@ -52,7 +53,8 @@ export const ReactNativeJoystick = ({ onStart, onMove, onStop, color = "#000000"
     [nippleRadius, wrapperRadius]
   );
 
-  const handleTouchEnd = () => {
+  const handleTouchEnd = useCallback(() => {
+    "worklet";
     setX(wrapperRadius - nippleRadius);
     setY(wrapperRadius - nippleRadius);
     onStop &&
@@ -68,9 +70,10 @@ export const ReactNativeJoystick = ({ onStart, onMove, onStop, color = "#000000"
         },
         type: "stop",
       });
-  };
+  }, [wrapperRadius, nippleRadius, onStop]);
 
-  const handleTouchStart = () => {
+  const handleTouchStart = useCallback(() => {
+    "worklet";
     onStart &&
       onStart({
         force: 0,
@@ -84,9 +87,10 @@ export const ReactNativeJoystick = ({ onStart, onMove, onStop, color = "#000000"
         },
         type: "start",
       });
-  };
+  }, [onStart]);
 
   const panGesture = Gesture.Pan().onStart(handleTouchStart).onEnd(handleTouchEnd).onTouchesMove(handleTouchMove);
+
   const styles = useMemo(
     () =>
       StyleSheet.create({
